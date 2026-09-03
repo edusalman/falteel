@@ -23,7 +23,7 @@ function paraISO(data: Date): string {
 }
 
 export function Home() {
-  const { signOut, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const {
     dataAtual, isHoje, isFeriado, nomeFeriado, aulasHoje, proximaAula, semestreAtivo, isLoading,
@@ -47,9 +47,8 @@ export function Home() {
   if (!semestreAtivo) {
     return (
       <div className="min-h-screen p-4 flex flex-col items-center justify-center text-center gap-4">
-        <div className="flex justify-end items-center gap-3 w-full max-w-sm">
-          <button onClick={signOut} className="text-xs font-bold underline cursor-pointer">SAIR</button>
-          <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer hover:rotate-45 transition-transform">
+        <div className="flex justify-end items-center w-full max-w-sm">
+          <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer">
             <IconEngrenagem className="w-6 h-6" />
           </button>
         </div>
@@ -85,8 +84,7 @@ export function Home() {
             {isAdmin && (
               <button onClick={() => navigate('/admin')} className="text-xs font-bold underline cursor-pointer">ADMIN</button>
             )}
-            <button onClick={signOut} className="text-xs font-bold underline cursor-pointer">SAIR</button>
-            <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer hover:rotate-45 transition-transform">
+            <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer">
               <IconEngrenagem className="w-6 h-6" />
             </button>
           </div>

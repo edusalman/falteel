@@ -3,12 +3,21 @@
 export function IconEngrenagem({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
-      <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" strokeWidth="2.2" />
+      <g fill="currentColor">
+        <rect x="10.6" y="0.8" width="2.8" height="4.2" />
+        <rect x="10.6" y="19" width="2.8" height="4.2" />
+        <rect x="10.6" y="0.8" width="2.8" height="4.2" transform="rotate(45 12 12)" />
+        <rect x="10.6" y="19" width="2.8" height="4.2" transform="rotate(45 12 12)" />
+        <rect x="10.6" y="0.8" width="2.8" height="4.2" transform="rotate(90 12 12)" />
+        <rect x="10.6" y="19" width="2.8" height="4.2" transform="rotate(90 12 12)" />
+        <rect x="10.6" y="0.8" width="2.8" height="4.2" transform="rotate(135 12 12)" />
+        <rect x="10.6" y="19" width="2.8" height="4.2" transform="rotate(135 12 12)" />
+      </g>
       <path
-        d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1M18.5 18.5l-2.1-2.1M7.6 7.6L5.5 5.5"
-        stroke="currentColor"
-        strokeWidth="2.2"
-        strokeLinecap="round"
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 18.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm0-3.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+        fill="currentColor"
       />
     </svg>
   );

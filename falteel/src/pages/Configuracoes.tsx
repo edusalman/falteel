@@ -15,7 +15,7 @@ const OPCOES: { valor: NotificationTiming; label: string; descricao: string }[] 
 
 export function Configuracoes() {
   const navigate = useNavigate();
-  const { user, profile, refetchProfile } = useAuth();
+  const { user, profile, refetchProfile, signOut } = useAuth();
   const [isSalvando, setIsSalvando] = useState(false);
   const [permissao, setPermissao] = useState<NotificationPermission>(
     typeof Notification === 'undefined' ? 'denied' : Notification.permission,
@@ -94,6 +94,13 @@ export function Configuracoes() {
               );
             })}
           </div>
+        </section>
+
+        {/* Sair — de propósito longe do topo, pra não virar toque sem querer */}
+        <section className="pt-4 border-t-4 border-black">
+          <button onClick={signOut} className="btn-brutal bg-neo-red text-white w-full">
+            SAIR DA CONTA
+          </button>
         </section>
       </div>
     </div>
