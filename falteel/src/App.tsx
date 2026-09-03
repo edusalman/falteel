@@ -8,6 +8,7 @@ import { Login } from './pages/Login';
 import { Semestres } from './pages/Semestres';
 import { Disciplinas } from './pages/Disciplinas';
 import { Dashboard } from './pages/Dashboard';
+import { Provas } from './pages/Provas';
 import { Configuracoes } from './pages/Configuracoes';
 import { AdminPanel } from './pages/AdminPanel';
 import { Home } from './pages/Home'; // <- A Nova Home do Foco Diário
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/semestres" element={<Semestres />} />
             <Route path="/disciplinas" element={<Disciplinas />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/provas" element={<Provas />} />
             <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>
 

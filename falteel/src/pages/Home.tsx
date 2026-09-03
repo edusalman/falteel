@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFocoDiario } from '../hooks/useFocoDiario';
 import { useAuth } from '../store/useAuth';
 import { IconAlerta } from '../components/IconAlerta';
+import { IconEngrenagem } from '../components/IconEngrenagem';
 
 const LABEL_STATUS: Record<string, string> = {
   presente: 'FUI',
@@ -46,8 +47,11 @@ export function Home() {
   if (!semestreAtivo) {
     return (
       <div className="min-h-screen p-4 flex flex-col items-center justify-center text-center gap-4">
-        <div className="flex justify-end w-full max-w-sm">
+        <div className="flex justify-end items-center gap-3 w-full max-w-sm">
           <button onClick={signOut} className="text-xs font-bold underline cursor-pointer">SAIR</button>
+          <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer hover:rotate-45 transition-transform">
+            <IconEngrenagem className="w-6 h-6" />
+          </button>
         </div>
         <p className="card-brutal bg-white font-bold">
           Você ainda não tem nenhum semestre cadastrado. Crie um pra começar a usar o FaltEEL.
@@ -82,6 +86,9 @@ export function Home() {
               <button onClick={() => navigate('/admin')} className="text-xs font-bold underline cursor-pointer">ADMIN</button>
             )}
             <button onClick={signOut} className="text-xs font-bold underline cursor-pointer">SAIR</button>
+            <button onClick={() => navigate('/configuracoes')} aria-label="Configurações" className="cursor-pointer hover:rotate-45 transition-transform">
+              <IconEngrenagem className="w-6 h-6" />
+            </button>
           </div>
         </div>
 
@@ -216,8 +223,8 @@ export function Home() {
           <button onClick={() => navigate('/semestres')} className="btn-brutal bg-white text-black text-xs">
             SEMESTRES
           </button>
-          <button onClick={() => navigate('/configuracoes')} className="btn-brutal bg-white text-black text-xs">
-            CONFIGURAÇÕES
+          <button onClick={() => navigate('/provas')} className="btn-brutal bg-white text-black text-xs">
+            PROVAS
           </button>
         </div>
 
