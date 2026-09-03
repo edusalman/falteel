@@ -25,7 +25,7 @@ export function Home() {
   const { signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const {
-    dataAtual, isHoje, isFeriado, nomeFeriado, aulasHoje, proximaAula, isLoading,
+    dataAtual, isHoje, isFeriado, nomeFeriado, aulasHoje, proximaAula, semestreAtivo, isLoading,
     registrarAula, diaAnterior, diaSeguinte, irParaHoje, irParaData,
     carregarFocoDiario, fetchSemestres,
   } = useFocoDiario();
@@ -42,6 +42,22 @@ export function Home() {
   }, [carregarFocoDiario]);
 
   if (isLoading) return <div className="p-4 font-bold text-center mt-10">CARREGANDO FOCO DIÁRIO...</div>;
+
+  if (!semestreAtivo) {
+    return (
+      <div className="min-h-screen p-4 flex flex-col items-center justify-center text-center gap-4">
+        <div className="flex justify-end w-full max-w-sm">
+          <button onClick={signOut} className="text-xs font-bold underline cursor-pointer">SAIR</button>
+        </div>
+        <p className="card-brutal bg-white font-bold">
+          Você ainda não tem nenhum semestre cadastrado. Crie um pra começar a usar o FaltEEL.
+        </p>
+        <button onClick={() => navigate('/semestres')} className="btn-brutal bg-neo-yellow text-black">
+          CRIAR MEU PRIMEIRO SEMESTRE
+        </button>
+      </div>
+    );
+  }
 
   const disciplinasEmPerigo = aulasHoje.filter(a => a.faltasRestantes === 1);
   const disciplinasAlerta = aulasHoje.filter(a => a.faltasRestantes === 2);

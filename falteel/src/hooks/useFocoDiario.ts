@@ -79,7 +79,7 @@ async function buscarProximaAulaValida(userId: string, semestreId: string, dataB
 
 export function useFocoDiario() {
   const { user } = useAuth();
-  const { semestreAtivo, fetchSemestres } = useSemestres();
+  const { semestreAtivo, fetchSemestres, isLoading: isLoadingSemestres } = useSemestres();
 
   const [dataAtual, setDataAtual] = useState(new Date());
   const [isFeriado, setIsFeriado] = useState(false);
@@ -91,7 +91,19 @@ export function useFocoDiario() {
   const isHoje = mesmoDia(dataAtual, new Date());
 
   const carregarFocoDiario = useCallback(async () => {
-    if (!user || !semestreAtivo) return;
+    if (!user) return;
+
+    // Ainda não sabemos se existe semestre — mantém o loading até o useSemestres terminar
+    if (isLoadingSemestres) return;
+
+    // Usuário confirmadamente sem nenhum semestre cadastrado (ex: acabou de se cadastrar)
+    if (!semestreAtivo) {
+      setAulasHoje([]);
+      setProximaAula(null);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     const diaSemana = dataAtual.getDay(); // 0 = Dom, 1 = Seg...
@@ -160,7 +172,7 @@ export function useFocoDiario() {
     }
 
     setIsLoading(false);
-  }, [user, semestreAtivo, dataAtual, isHoje]);
+  }, [user, semestreAtivo, isLoadingSemestres, dataAtual, isHoje]);
 
   // Registra ou edita (upsert) o status de uma aula no dia selecionado
   const registrarAula = async (disciplinaUsuarioId: string, status: StatusAula, justificativa: string = '') => {
@@ -208,6 +220,7 @@ export function useFocoDiario() {
     nomeFeriado,
     aulasHoje,
     proximaAula,
+    semestreAtivo,
     isLoading,
     registrarAula,
     diaAnterior,
