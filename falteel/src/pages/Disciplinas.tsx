@@ -40,14 +40,15 @@ export function Disciplinas() {
     fetchDisciplinas();
   }, [fetchDisciplinas]);
 
+  // Busca acento-insensível via função no banco (unaccent) — "fisica" encontra "Física"
   const buscarProfessores = useCallback(async (termo: string): Promise<Sugestao[]> => {
-    const { data } = await supabase.from('professores').select('id, nome').ilike('nome', `%${termo}%`).order('nome').limit(6);
-    return (data ?? []).map(p => ({ id: p.id, label: p.nome }));
+    const { data } = await supabase.rpc('buscar_professores', { termo });
+    return (data ?? []).map((p) => ({ id: p.id, label: p.nome }));
   }, []);
 
   const buscarDisciplinas = useCallback(async (termo: string): Promise<Sugestao[]> => {
-    const { data } = await supabase.from('disciplinas_globais').select('id, nome').ilike('nome', `%${termo}%`).order('nome').limit(6);
-    return (data ?? []).map(d => ({ id: d.id, label: d.nome }));
+    const { data } = await supabase.rpc('buscar_disciplinas_globais', { termo });
+    return (data ?? []).map((d) => ({ id: d.id, label: d.nome }));
   }, []);
 
   const toggleDia = (index: number) => {

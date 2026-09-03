@@ -49,7 +49,16 @@ export interface Database {
       }
     }
     Views: { [_ in never]: never }
-    Functions: { [_ in never]: never }
+    Functions: {
+      buscar_professores: {
+        Args: { termo: string }
+        Returns: Database['public']['Tables']['professores']['Row'][]
+      }
+      buscar_disciplinas_globais: {
+        Args: { termo: string }
+        Returns: Database['public']['Tables']['disciplinas_globais']['Row'][]
+      }
+    }
     Enums: {
       notification_timing: 'before' | 'during' | 'after'
       tipo_credito: 'simples' | 'duplo'

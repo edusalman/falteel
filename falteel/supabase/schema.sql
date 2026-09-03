@@ -126,6 +126,35 @@ create trigger set_registros_aula_updated_at
   for each row execute function public.set_updated_at();
 
 -- ============================================================
+-- Busca acento-insensível pro autocomplete de professor/disciplina
+-- (ilike sozinho é case-insensitive mas NÃO ignora acento — "fisica"
+-- não bate com "Física" sem isso)
+-- ============================================================
+create extension if not exists unaccent;
+
+create or replace function public.buscar_professores(termo text)
+returns setof public.professores
+language sql
+stable
+as $$
+  select * from public.professores
+  where unaccent(nome) ilike unaccent('%' || termo || '%')
+  order by nome
+  limit 6;
+$$;
+
+create or replace function public.buscar_disciplinas_globais(termo text)
+returns setof public.disciplinas_globais
+language sql
+stable
+as $$
+  select * from public.disciplinas_globais
+  where unaccent(nome) ilike unaccent('%' || termo || '%')
+  order by nome
+  limit 6;
+$$;
+
+-- ============================================================
 -- Helper: checa is_admin sem causar recursão de RLS em profiles
 -- (security definer bypassa a RLS na leitura interna)
 -- ============================================================
