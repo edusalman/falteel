@@ -15,7 +15,9 @@ function formatarDataBR(iso: string): string {
 
 export function Semestres() {
   const navigate = useNavigate();
-  const { semestres, semestreAtivo, isLoading, criarSemestre, editarSemestre, excluirSemestre, fetchSemestres } = useSemestres();
+  const {
+    semestres, semestreAtivo, isLoading, criarSemestre, editarSemestre, excluirSemestre, duplicarDisciplinas, fetchSemestres,
+  } = useSemestres();
 
   useEffect(() => {
     fetchSemestres();
@@ -24,6 +26,7 @@ export function Semestres() {
   const [nome, setNome] = useState('');
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
+  const [copiarDeId, setCopiarDeId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [editandoId, setEditandoId] = useState<string | null>(null);
@@ -36,16 +39,23 @@ export function Semestres() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const { error } = await criarSemestre(nome, dataInicio, dataFim);
+    const { id, error } = await criarSemestre(nome, dataInicio, dataFim);
 
-    if (error) {
-      alert(error);
-    } else {
-      setNome('');
-      setDataInicio('');
-      setDataFim('');
+    if (error || !id) {
+      alert(error ?? 'Erro ao criar semestre.');
+      setIsSubmitting(false);
+      return;
     }
 
+    if (copiarDeId) {
+      const { error: errDuplicar } = await duplicarDisciplinas(copiarDeId, id);
+      if (errDuplicar) alert(`Semestre criado, mas ${errDuplicar.toLowerCase()}. Você pode adicionar as disciplinas manualmente.`);
+    }
+
+    setNome('');
+    setDataInicio('');
+    setDataFim('');
+    setCopiarDeId('');
     setIsSubmitting(false);
   };
 
@@ -125,7 +135,22 @@ export function Semestres() {
                 />
               </div>
             </div>
-            <button 
+            {semestres.length > 0 && (
+              <div>
+                <label className="block font-bold mb-1 uppercase text-sm">Copiar disciplinas de (opcional)</label>
+                <select
+                  value={copiarDeId}
+                  onChange={e => setCopiarDeId(e.target.value)}
+                  className="w-full border-2 border-black p-2 bg-white"
+                >
+                  <option value="">Nenhum — começar vazio</option>
+                  {semestres.map(s => (
+                    <option key={s.id} value={s.id}>{s.nome}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <button
               type="submit" disabled={isSubmitting}
               className="btn-brutal w-full bg-white text-black hover:bg-gray-100 disabled:opacity-50 mt-2"
             >

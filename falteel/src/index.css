@@ -32,17 +32,23 @@
   @apply border-2 border-black shadow-brutal font-bold px-4 py-2 uppercase cursor-pointer transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none;
 }
 
+/* Sem opacity de propósito: se a animação nunca rodar (reduced-motion, navegador
+   que não anima), o pior caso é o card nascer 6px mais baixo — nunca invisível. */
 @keyframes fade-in-up {
   from {
-    opacity: 0;
     transform: translateY(6px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 @utility animate-fade-in {
   animation: fade-in-up 0.25s ease-out backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+  }
 }

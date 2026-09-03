@@ -1,8 +1,11 @@
 // Caminho: ./src/pages/Disciplinas.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSemestres } from '../hooks/useSemestres';
 import { useDisciplinas, type DisciplinaUsuario } from '../hooks/useDisciplinas';
+import { AutocompleteInput, type Sugestao } from '../components/AutocompleteInput';
+import { GradeCalendario } from '../components/GradeCalendario';
+import { supabase } from '../lib/supabase';
 
 const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
@@ -31,9 +34,21 @@ export function Disciplinas() {
   const [editHorario, setEditHorario] = useState('');
   const [isSalvandoEdicao, setIsSalvandoEdicao] = useState(false);
 
+  const [visualizacao, setVisualizacao] = useState<'calendario' | 'lista'>('calendario');
+
   useEffect(() => {
     fetchDisciplinas();
   }, [fetchDisciplinas]);
+
+  const buscarProfessores = useCallback(async (termo: string): Promise<Sugestao[]> => {
+    const { data } = await supabase.from('professores').select('id, nome').ilike('nome', `%${termo}%`).order('nome').limit(6);
+    return (data ?? []).map(p => ({ id: p.id, label: p.nome }));
+  }, []);
+
+  const buscarDisciplinas = useCallback(async (termo: string): Promise<Sugestao[]> => {
+    const { data } = await supabase.from('disciplinas_globais').select('id, nome').ilike('nome', `%${termo}%`).order('nome').limit(6);
+    return (data ?? []).map(d => ({ id: d.id, label: d.nome }));
+  }, []);
 
   const toggleDia = (index: number) => {
     setDiasSelecionados(prev => 
@@ -122,12 +137,24 @@ export function Disciplinas() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block font-bold mb-1 uppercase text-xs">Matéria</label>
-              <input type="text" required value={nomeDisciplina} onChange={e => setNomeDisciplina(e.target.value)} placeholder="Ex: Cálculo I" className="w-full border-2 border-black p-2 focus:outline-none focus:shadow-brutal transition-shadow bg-white" />
+              <AutocompleteInput
+                value={nomeDisciplina}
+                onChange={setNomeDisciplina}
+                buscarSugestoes={buscarDisciplinas}
+                placeholder="Ex: Cálculo I"
+                required
+              />
             </div>
 
             <div>
               <label className="block font-bold mb-1 uppercase text-xs">Professor</label>
-              <input type="text" required value={nomeProfessor} onChange={e => setNomeProfessor(e.target.value)} placeholder="Ex: Possani" className="w-full border-2 border-black p-2 focus:outline-none focus:shadow-brutal transition-shadow bg-white" />
+              <AutocompleteInput
+                value={nomeProfessor}
+                onChange={setNomeProfessor}
+                buscarSugestoes={buscarProfessores}
+                placeholder="Ex: Possani"
+                required
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -175,11 +202,29 @@ export function Disciplinas() {
         </div>
 
         {/* Lista de Disciplinas */}
-        <h2 className="text-xl font-black uppercase mb-4">Minhas Matérias</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-black uppercase">Minhas Matérias</h2>
+          <div className="flex border-2 border-black shrink-0">
+            <button
+              onClick={() => setVisualizacao('calendario')}
+              className={`px-2 py-1 text-xs font-bold uppercase cursor-pointer ${visualizacao === 'calendario' ? 'bg-black text-white' : 'bg-white'}`}
+            >
+              Calendário
+            </button>
+            <button
+              onClick={() => setVisualizacao('lista')}
+              className={`px-2 py-1 text-xs font-bold uppercase cursor-pointer border-l-2 border-black ${visualizacao === 'lista' ? 'bg-black text-white' : 'bg-white'}`}
+            >
+              Lista
+            </button>
+          </div>
+        </div>
         {isLoading ? (
           <p className="font-bold text-center">Carregando grade...</p>
         ) : minhasDisciplinas.length === 0 ? (
           <p className="font-bold text-gray-600 border-2 border-dashed border-black p-4 text-center">Nenhuma matéria adicionada.</p>
+        ) : visualizacao === 'calendario' ? (
+          <GradeCalendario disciplinas={minhasDisciplinas} />
         ) : (
           <div className="space-y-4">
             {minhasDisciplinas.map((disc, index) => (
